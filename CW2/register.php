@@ -1,26 +1,31 @@
 <?php
-if (isset($_POST['ruser'])){
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "cw2";
-$conn = new PDO("mysql:dbname=$dbname;host=$servername;", $username, $password);
-$query = $conn -> prepare("insert into users(user,pass,ustatus,answer) values (:user,:pass,1,:answer)");
-$query -> bindParam(":user",$_POST['ruser']);
-$query -> bindParam(":pass",$_POST['rpass']);
-$query -> bindParam(":answer",$_POST['sanswer']);
-$query-> execute();
-echo "you have registered succesfully";
-header('Location: login.php');}
+if (isset($_POST['ruser'])) {
+    $servername = "localhost";
+    $username   = "root";
+    $password   = "";
+    $dbname     = "cw2";
+    $conn       = new PDO("mysql:dbname=$dbname;host=$servername;", $username, $password);
+    $query      = $conn->prepare("select answer from users where user=:user");
+    $query->bindParam(":user", $_POST['ruser']);
+    $query->execute();
+    $result = $query->fetch(PDO::FETCH_ASSOC);
+    if ($result['answer'] == $_POST['sanswer']) {
+        $query2 = $conn->prepare("update users set pass=:pass where user=:user");
+        $query2->bindParam(":pass", $_POST['npass']);
+        $query2->bindParam(":user", $_POST['ruser']);
+        $query2->execute();
+        echo "you have recovered your account succesfully";
+        header('Location: login.php');
+    }
+}
 ?>
 <html>
 <head><link rel=stylesheet type=text/css href=style.css></head>
 <body>
-<form method="post" action="register.php">
+<form method="post" action="recover.php">
 Username:<input name="ruser" type="text"></input><br>
-Password:<input name="rpass" type="password"></input><br>
-Secret question:<select><option>Whats your mum's name?</option><option>Where were you born?</option><option>What year were you born in?</option></select><br>
-<input type=text name=sanswer placeholder='type your answer here'></input><br>
+New Password:<input name="npass" type="password"></input><br>
+Answer to your secret question:<input type=text name=sanswer placeholder='type your answer here'></input><br>
 <input type=submit></input>
 <button><a href=login.php>Go back to login page</a></button>
 </form>
