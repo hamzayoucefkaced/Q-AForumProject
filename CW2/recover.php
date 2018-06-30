@@ -1,21 +1,22 @@
 <?php
-if (isset($_POST['ruser'])){
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "cw2";
-$conn = new PDO("mysql:dbname=$dbname;host=$servername;", $username, $password);
-$query = $conn -> prepare("select answer from users where user=:user");
-$query -> bindParam(":user",$_POST['ruser']);
-$query-> execute();
-$result = $query->fetch(PDO::FETCH_ASSOC);
-if($result['answer']==$_POST['sanswer']){
-$query2 = $conn->prepare("update users set pass=:pass where user=:user");
-$query2 -> bindParam(":pass",$_POST['npass']);
-$query2 -> bindParam(":user",$_POST['ruser']);
-$query2 -> execute();
-echo "you have recovered your account succesfully";
-header('Location: login.php');}
+if (isset($_POST['ruser'])) {
+    $servername = "localhost";
+    $username   = "root";
+    $password   = "";
+    $dbname     = "cw2";
+    $conn       = new PDO("mysql:dbname=$dbname;host=$servername;", $username, $password);
+    $query      = $conn->prepare("select answer from users where user=:user");
+    $query->bindParam(":user", $_POST['ruser']);
+    $query->execute();
+    $result = $query->fetch(PDO::FETCH_ASSOC);
+    if ($result['answer'] == $_POST['sanswer']) {
+        $query2 = $conn->prepare("update users set pass=:pass where user=:user");
+        $query2->bindParam(":pass", $_POST['npass']);
+        $query2->bindParam(":user", $_POST['ruser']);
+        $query2->execute();
+        echo "you have recovered your account succesfully";
+        header('Location: login.php');
+    }
 }
 ?>
 <html>
